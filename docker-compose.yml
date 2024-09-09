@@ -1,0 +1,19 @@
+services:
+  api-predict-price:
+    container_name: predict-price
+    image: predict-price
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./service:/code/service
+    networks:
+      - backend
+    ports:
+      - 5000:5000
+
+networks:
+  backend:
+    driver: bridge
+ 

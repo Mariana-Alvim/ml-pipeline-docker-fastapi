@@ -1,0 +1,31 @@
+# Usar a imagem base do Ubuntu
+FROM ubuntu:22.04
+USER root
+
+ENV VERSAO=1.0.1
+
+COPY . /code/
+
+# Diretório de trabalho no contêiner
+WORKDIR /code
+
+# Definir variáveis de ambiente para evitar interações durante a instalação
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Atualizar o sistema e instalar dependências essenciais
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y python3.10-full && \
+    apt-get install --no-install-recommends -y python3-pip && \
+    apt-get install --no-install-recommends -y python3.10-dev && \
+    apt-get clean
+
+# Instalar as dependências do Python
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+RUN chmod -R +x /code
+
+# Expor a porta que o FastAPI vai rodar
+EXPOSE 5000
+
+# Comando para rodar a aplicação FastAPI usando uvicorn
+CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "5000"]
